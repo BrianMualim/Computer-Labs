@@ -1,0 +1,231 @@
+package mualimbriancs55project3;
+
+import java.util.Scanner;
+
+/**
+ *
+ * @author brian
+ */
+public class MualimBrianCS55Project3 {
+    
+    /**
+     * @param args the command line arguments
+     */
+    
+    static Scanner input = new Scanner(System.in);
+    
+    //LABNUMBER is a const, menuBreak is for the quit function
+    public static final int LABNUMBER = 4;
+    public static int menuBreak = 0;
+    
+    //labsAndStations has first [] for labs and second [] for stations
+    //sizeOfLabs is for loops. Has the capacity for num of labs and value for stations in each lab
+    public static int[][] labsAndStations = new int[LABNUMBER][];
+    public static int[] sizeOfLabs = new int[LABNUMBER];
+    
+    //setData initializes data within the program
+    public static void setData() {
+        labsAndStations[0] = new int[5];
+        labsAndStations[1] = new int[6];
+        labsAndStations[2] = new int[4];
+        labsAndStations[3] = new int[3];
+        
+        sizeOfLabs[0]=5;
+        sizeOfLabs[1]=6;
+        sizeOfLabs[2]=4;
+        sizeOfLabs[3]=3;
+    }
+    
+    public static void printData(){
+
+        for (int i = 0; i < LABNUMBER; i++){
+            System.out.print("Lab "+(i+1)+": ");
+            
+            //Temp becomes placeholder for the values inside lab 1, lab 2 etc one at a time
+            int[] temp = labsAndStations[i];
+            
+            for (int j = 0; j < sizeOfLabs[i]; j++){
+                System.out.print(" Station ");
+                System.out.print(j + 1);
+                System.out.print(": ");
+                
+                //Checks if labsAndStations[i][j] has a value stored inside
+                if (temp[j] == 0){
+                    System.out.print("Empty  |");
+                }
+                else
+                {
+                System.out.print(temp[j]);
+                System.out.print("  |");
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public static int getUserInput(){
+        System.out.println("MAIN MENU");
+        System.out.println("0: Quit");
+        System.out.println("1: Simulate login");
+        System.out.println("2: Simulate logoff");
+        System.out.println("3: Search");
+        System.out.println("Select the number you want then press enter: ");
+        int num;
+        while(true){
+            num = input.nextInt();
+            if(num>=0&&num<=3){
+                return num;
+            }else{
+                System.out.println("Invalid please try again");
+            }
+        }
+    }
+    
+    public static void processingUserInput(int userInput){
+    
+        switch(userInput){
+            //for closing the system, make a new counter??
+            case 0 -> {
+                menuBreak++;
+                break;
+            }
+            
+            //simulate login
+            case 1-> {
+                int lab;
+                int station = 0;
+                int id;
+                
+
+                System.out.println("Enter the 5 digit ID number of the user logging in: ");
+                //while loop for id number
+                while(true){
+                    
+                    id = input.nextInt();
+                    String idChecker = Integer.toString(id); 
+                    if(idChecker.length()!=5){
+                        System.out.println("Please enter a 5 digit ID number");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                
+                //Check if user is already logged in
+                int trigger=0;
+                for(int i =0;i<LABNUMBER;i++){
+                    for(int j =0;j<sizeOfLabs[i];j++){
+                        
+                        if(id==labsAndStations[i][j]){
+                            trigger++;
+                            System.out.println("User "+id+" is already logged in");
+                            break;
+                        }
+                    }
+                }
+                if(trigger==1){
+                    break;
+                }
+                
+                System.out.println("Enter the lab number the user is logging in from (1-4): ");
+                //while loop for lab number
+                while(true){
+                    lab = input.nextInt();
+                    if(lab>=1&&lab<=4){
+                        break;
+                    }
+                    else{
+                        System.out.println("Please enter a lab number (1-4)");
+                    }
+                }
+                 
+                System.out.println("Enter computer station number the user is logging in to (1-"+sizeOfLabs[lab-1]+"): ");
+                //while loop for station number and prevents out of bound for array index
+                while(true){
+                    station = input.nextInt();
+                    if(station>=1&&station<=sizeOfLabs[lab-1]){
+                        break;
+                    }
+                    else{
+                        System.out.println("Please enter a station number (1-"+sizeOfLabs[lab-1]+"): ");
+                    }
+                }
+                
+                //Prevents someone from logging into a station that's occupied already
+                if(labsAndStations[lab-1][station-1]!=0){
+                    System.out.println("Someone's already using that lab");
+                }else{
+                    //set inputting user ID into labsAndStations
+                    labsAndStations[lab-1][station-1]=id;
+                }
+                
+                break;
+            }
+            
+            //simulate logoff
+            case 2->{
+                int id;
+                int trigger=0;
+                System.out.println("Enter the 5 digit ID number of the user to find: ");
+                id = input.nextInt();
+                
+                //sorts through each lab and station
+                //if matching id is found, logout is successful and labsAndStations[i][j] is set back to 0
+                //else the if statement executes and tells us user is not logged in
+                for(int i =0;i<LABNUMBER;i++){
+                    for(int j =0;j<sizeOfLabs[i];j++){
+                        
+                        if(id==labsAndStations[i][j]){
+                            labsAndStations[i][j]=0;
+                            trigger++;
+                            System.out.println("User "+id+" is logged off");
+                            break;
+                        }
+                    }
+                }
+                if(trigger==0){
+                    System.out.println("User "+id+" is not logged in");
+                }
+                
+                break;
+            }
+            //simulate search
+            case 3->{
+                int id;
+                int trigger=0;
+                
+                System.out.println("Enter the user you want to search up: ");
+                id=input.nextInt();
+                
+                //Loop to go through every iteration of labsAndStations and check if user input is logged in
+                for(int i =0;i<LABNUMBER;i++){
+                    for(int j =0;j<sizeOfLabs[i];j++){
+                        
+                        if(id==labsAndStations[i][j]){
+                            trigger++;
+                            System.out.println("User "+id+" is located in lab "+(i+1)+" and station "+(j+1));
+                            break;
+                        }
+                    }
+                }
+                if(trigger==0){
+                    System.out.println("User "+id+" is not logged in");
+                }
+                break;
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        // TODO code application logic here   
+        setData();
+        printData();
+        
+        do{
+            processingUserInput(getUserInput());
+            System.out.println();
+            printData();
+        }while(menuBreak==0);
+    }
+}
